@@ -1,0 +1,28 @@
+# Student Stress Predictor
+
+A Streamlit app that uses the selected KNN pipeline from `Final_Dataset_Ml_project.ipynb` to predict Low, Medium, or High stress from ten questionnaire responses.
+
+## Add the trained model
+
+The model file is not included yet. In Colab, run the notebook's final pipeline saving cell, then download `Best_KNN_Pipeline.joblib` from `MyDrive/ML_Project_Artifacts`. Put it in this project folder beside `app.py`.
+
+The app sends numeric scores (Never = 1 through Very Often = 5) to the saved pipeline in the training feature order. The pipeline should include its fitted imputer/scaler and KNN classifier; no retraining is done by the app.
+
+## Run locally
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+Use the same scikit-learn version that was used to save the joblib model in Colab. Scikit-learn does not guarantee compatibility when loading persisted models across versions.
+
+## Deploy on Streamlit Community Cloud
+
+1. Push `app.py`, `requirements.txt`, `README.md`, and `Best_KNN_Pipeline.joblib` to a GitHub repository.
+2. In Streamlit Community Cloud, create an app from that repository and select `app.py` as the entry point.
+3. Deploy. The app will install dependencies from `requirements.txt`.
+
+The app provides an educational estimate, not a clinical assessment or diagnosis.
