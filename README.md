@@ -18,7 +18,7 @@ python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Use the same scikit-learn version that was used to save the joblib model in Colab. Scikit-learn does not guarantee compatibility when loading persisted models across versions.
+The saved pipeline was created with scikit-learn 1.6.1, so `requirements.txt` pins that version. Scikit-learn does not guarantee compatibility when loading persisted models across versions.
 
 ## Deploy on Streamlit Community Cloud
 

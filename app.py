@@ -30,9 +30,10 @@ FEATURES = [
     ("Competing_Responsibilities", "Other responsibilities compete with academic responsibilities"),
 ]
 
-
 @st.cache_resource
-def load_model(path: str):
+def load_model(path: str, modified_time: float):
+    # Include the file modification time in the cache key so replacing the
+    # trained pipeline causes Streamlit to load the new artifact.
     return joblib.load(path)
 
 
@@ -41,7 +42,6 @@ st.write(
     "Answer the questions based on how often each situation has applied to you. "
     "Your responses are used to estimate a stress category with the project’s selected KNN model."
 )
-st.caption("This is an educational prediction tool, not a clinical assessment or diagnosis.")
 
 if not MODEL_PATH.is_file():
     st.error("The trained model file is missing, so the predictor cannot run yet.")
@@ -71,7 +71,7 @@ if submitted:
         columns=[name for name, _ in FEATURES],
     )
     try:
-        model = load_model(str(MODEL_PATH))
+        model = load_model(str(MODEL_PATH), MODEL_PATH.stat().st_mtime)
         prediction = str(model.predict(input_data)[0]).strip().title()
     except Exception as exc:
         st.error(f"Could not load the model or make a prediction: {exc}")
@@ -89,11 +89,25 @@ if submitted:
     title, detail = result_style.get(
         prediction, (f"{prediction} stress", f"Model prediction: {prediction}")
     )
-    st.subheader("Estimated result")
+    st.subheader("KNN model prediction")
     st.success(f"**{title}**\n\n{detail}")
     st.metric("Questionnaire stress percentage", f"{stress_percent:.0f}%")
     st.caption(
-        f"Calculated from your answers: {total_score}/50 points, normalized so the "
-        "minimum possible score (10) is 0% and the maximum (50) is 100%. "
-        "The percentage is a questionnaire score; the category above is predicted by the model."
+        f"The category above comes only from the trained KNN model. The separate percentage "
+        f"is calculated from your answers ({total_score}/50 points), normalized from the "
+        "minimum score (10) to the maximum (50); it does not determine the category."
     )
+    if prediction == "High":
+        st.markdown("#### Your highest-scoring stress factors")
+        st.write("Based on the answers you entered, these factors received the highest scores:")
+        personal_scores = [
+            (question, answers[name], LIKERT_SCORES[answers[name]])
+            for name, question in FEATURES
+        ]
+        sorted_scores = sorted(personal_scores, key=lambda item: item[2], reverse=True)
+        cutoff = sorted_scores[min(2, len(sorted_scores) - 1)][2]
+        displayed_features = [item for item in sorted_scores if item[2] >= cutoff]
+        for rank, (feature, _, score) in enumerate(displayed_features, start=1):
+            contribution = score / total_score * 100
+            st.write(f"{rank}. **{feature}** — {contribution:.1f}% contribution")
+        
