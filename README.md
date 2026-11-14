@@ -4,16 +4,17 @@ A Streamlit app that uses the selected KNN pipeline from `Final_Dataset_Ml_proje
 
 ## Add the trained model
 
-The model file is not included yet. In Colab, run the notebook's final pipeline saving cell, then download `Best_KNN_Pipeline.joblib` from `MyDrive/ML_Project_Artifacts`. Put it in this project folder beside `app.py`.
+The trained pipeline is saved as `Best_KNN_Pipeline.joblib` in this project folder beside `app.py`. If you need to recreate it, run the notebook's final pipeline saving cell in Colab and download it from `MyDrive/ML_Project_Artifacts`.
 
 The app sends numeric scores (Never = 1 through Very Often = 5) to the saved pipeline in the training feature order. The pipeline should include its fitted imputer/scaler and KNN classifier; no retraining is done by the app.
 
 ## Run locally
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 streamlit run app.py
 ```
 

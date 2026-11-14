@@ -77,6 +77,10 @@ if submitted:
         st.error(f"Could not load the model or make a prediction: {exc}")
         st.stop()
 
+    total_score = int(input_data.iloc[0].sum())
+    # Normalize the notebook's 10–50 questionnaire score to a 0–100% scale.
+    stress_percent = (total_score - 10) / (50 - 10) * 100
+
     result_style = {
         "Low": ("Low stress", "The model classified these responses as Low."),
         "Medium": ("Medium stress", "The model classified these responses as Medium."),
@@ -87,8 +91,9 @@ if submitted:
     )
     st.subheader("Estimated result")
     st.success(f"**{title}**\n\n{detail}")
-    if prediction == "High":
-        st.info(
-            "If stress is affecting your wellbeing, consider reaching out to someone you trust "
-            "or a qualified support professional."
-        )
+    st.metric("Questionnaire stress percentage", f"{stress_percent:.0f}%")
+    st.caption(
+        f"Calculated from your answers: {total_score}/50 points, normalized so the "
+        "minimum possible score (10) is 0% and the maximum (50) is 100%. "
+        "The percentage is a questionnaire score; the category above is predicted by the model."
+    )
