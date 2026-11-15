@@ -20,10 +20,4 @@ streamlit run app.py
 
 The saved pipeline was created with scikit-learn 1.6.1, so `requirements.txt` pins that version. Scikit-learn does not guarantee compatibility when loading persisted models across versions.
 
-## Deploy on Streamlit Community Cloud
 
-1. Push `app.py`, `requirements.txt`, `README.md`, and `Best_KNN_Pipeline.joblib` to a GitHub repository.
-2. In Streamlit Community Cloud, create an app from that repository and select `app.py` as the entry point.
-3. Deploy. The app will install dependencies from `requirements.txt`.
-
-The app provides an educational estimate, not a clinical assessment or diagnosis.

@@ -32,8 +32,6 @@ FEATURES = [
 
 @st.cache_resource
 def load_model(path: str, modified_time: float):
-    # Include the file modification time in the cache key so replacing the
-    # trained pipeline causes Streamlit to load the new artifact.
     return joblib.load(path)
 
 
@@ -59,13 +57,12 @@ with st.form("stress_questionnaire"):
         answers[feature_name] = st.select_slider(
             question,
             options=LIKERT_OPTIONS,
-            value="Sometimes",
+            value="Never",
             key=feature_name,
         )
     submitted = st.form_submit_button("Estimate stress level", type="primary")
 
 if submitted:
-    # Preserve the exact feature names and ordering used to train the saved pipeline.
     input_data = pd.DataFrame(
         [[LIKERT_SCORES[answers[name]] for name, _ in FEATURES]],
         columns=[name for name, _ in FEATURES],
@@ -78,7 +75,6 @@ if submitted:
         st.stop()
 
     total_score = int(input_data.iloc[0].sum())
-    # Normalize the notebook's 10–50 questionnaire score to a 0–100% scale.
     stress_percent = (total_score - 10) / (50 - 10) * 100
 
     result_style = {
